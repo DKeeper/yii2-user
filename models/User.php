@@ -123,4 +123,51 @@ class User extends ActiveRecord implements IdentityInterface {
     {
         return $this->getAuthKey() === $authKey;
     }
+
+
+    /**
+     * Send email confirmation to user
+     *
+     * @return int
+     */
+    public function sendEmailConfirmation()
+    {
+        /** @var Mailer $mailer */
+        /** @var Message $message */
+
+        // modify view path to module views
+        $mailer           = Yii::$app->mailer;
+        $oldViewPath      = $mailer->viewPath;
+        $mailer->viewPath = Yii::$app->getModule("user")->emailViewPath;
+
+        // send email
+        $user    = $this;
+        $profile = $user->profile;
+        $email   = $user->new_email !== null ? $user->new_email : $user->email;
+        $subject = Yii::$app->id . " - " . Yii::t("user", "Email Confirmation");
+        $message  = $mailer->compose('confirmEmail', compact("subject", "user", "profile", "userKey"))
+            ->setTo($email)
+            ->setSubject($subject);
+
+        // check for messageConfig before sending (for backwards-compatible purposes)
+        if (empty($mailer->messageConfig["from"])) {
+            $message->setFrom(Yii::$app->params["adminEmail"]);
+        }
+        $result = $message->send();
+
+        // restore view path and return result
+        $mailer->viewPath = $oldViewPath;
+        return $result;
+    }
+
+    /**
+     * Verify password
+     *
+     * @param string $password
+     * @return bool
+     */
+    public function verifyPassword($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->password);
+    }
 } 
