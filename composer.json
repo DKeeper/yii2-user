@@ -16,5 +16,8 @@
     },
     "autoload": {
         "psr-4": { "dkeeper\\yii2\\user\\": "" }
+    },
+    "extra": {
+        "bootstrap": "dkeeper\\yii2\\user\\Bootstrap"
     }
 }
