@@ -1,0 +1,20 @@
+{
+    "name": "dkeeper/yii2-user",
+    "description": "Yii 2 user authentication module",
+    "keywords": ["yii", "yii2", "user", "auth", "authentication"],
+    "type": "yii2-module",
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "DKeeper",
+            "email": "dkapenkin@rambler.ru"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*",
+        "yiisoft/yii2-authclient": "*"
+    },
+    "autoload": {
+        "psr-4": { "dkeeper\\yii2\\user\\": "" }
+    }
+}
