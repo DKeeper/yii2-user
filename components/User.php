@@ -9,9 +9,12 @@
 namespace dkeeper\yii2\user\components;
 
 use yii\base\BootstrapInterface;
+use dkeeper\yii2\user\helpers\ModuleTrait;
 
 class User extends \yii\web\User implements BootstrapInterface
 {
+    use ModuleTrait;
+
     public $identityClass = 'dkeeper\yii2\user\models\User';
 
     /**
@@ -21,7 +24,7 @@ class User extends \yii\web\User implements BootstrapInterface
 
     public function bootstrap($app)
     {
-        \Yii::$app->getModule('user')->addModuleRules();
+        $this->getModule()->addModuleRules();
     }
 
     /**
@@ -32,20 +35,8 @@ class User extends \yii\web\User implements BootstrapInterface
      */
     public function getDisplayName($default = "")
     {
-        // define possible fields
-        $possibleNames = [
-            "username",
-            "email",
-            "id",
-        ];
-
-        // go through each and return if valid
-        foreach ($possibleNames as $possibleName) {
-            if (!empty($this->$possibleName)) {
-                return $this->$possibleName;
-            }
-        }
-
-        return $default;
+        /** @var \dkeeper\yii2\user\models\User $user */
+        $user = $this->getIdentity();
+        return $user ? $user->getDisplayName($default) : "";
     }
 }

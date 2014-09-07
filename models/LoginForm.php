@@ -9,9 +9,12 @@ namespace dkeeper\yii2\user\models;
 
 use Yii;
 use yii\base\Model;
+use dkeeper\yii2\user\helpers\ModuleTrait;
 
 class LoginForm extends Model
 {
+    use ModuleTrait;
+
     /**
      * @var string Username and/or email
      */
@@ -56,9 +59,9 @@ class LoginForm extends Model
         if (!$user) {
 
             // calculate error message
-            if (Yii::$app->getModule("user")->loginEmail && Yii::$app->getModule("user")->loginUsername) {
+            if ($this->getModule()->loginEmail && $this->getModule()->loginUsername) {
                 $errorAttribute = "Email/username";
-            } elseif (Yii::$app->getModule("user")->loginEmail) {
+            } elseif ($this->getModule()->loginEmail) {
                 $errorAttribute = "Email";
             } else {
                 $errorAttribute = "Username";
@@ -119,12 +122,12 @@ class LoginForm extends Model
              * @var $user \dkeeper\yii2\user\models\User
              */
             // build query based on email and/or username login properties
-            $user = Yii::$app->getModule("user")->model("user");
+            $user = $this->getModule()->model("user");
             $user = $user::find();
-            if (Yii::$app->getModule("user")->loginEmail) {
+            if ($this->getModule()->loginEmail) {
                 $user->orWhere(["email" => $this->username]);
             }
-            if (Yii::$app->getModule("user")->loginUsername) {
+            if ($this->getModule()->loginUsername) {
                 $user->orWhere(["username" => $this->username]);
             }
 

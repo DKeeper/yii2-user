@@ -38,6 +38,9 @@ class LogoutController extends Controller{
 
     public function actionIndex()
     {
-        return '';
+        Yii::$app->user->logout();
+
+        // redirect
+        $this->goHome();
     }
 } 

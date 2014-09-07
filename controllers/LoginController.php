@@ -35,7 +35,7 @@ class LoginController extends Controller {
         $model = Yii::$app->getModule('user')->model('loginForm');
 
         if ($model->load(Yii::$app->request->post()) && $model->login(Yii::$app->getModule("user")->loginDuration)) {
-            return $this->goBack();
+            return $this->goHome();
         }
 
         return $this->render('index',['model'=>$model]);

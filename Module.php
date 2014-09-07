@@ -56,7 +56,7 @@ class Module extends \yii\base\Module
     }
 
     public function addModuleRules(){
-        Yii::$app->urlManager->addRules($this->urlRules,false);
+        if(!empty($this->urlRules)) Yii::$app->urlManager->addRules($this->urlRules,false);
     }
 
     public function model($name){

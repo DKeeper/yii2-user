@@ -39,9 +39,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::submitButton(Yii::t('user', 'Login'), ['class' => 'btn btn-primary']) ?>
 
             <br/><br/>
-            <?= Html::a(Yii::t("user", "Register"), ["register"]) ?> /
-            <?= Html::a(Yii::t("user", "Forgot password") . "?", ["forgot"]) ?> /
-            <?= Html::a(Yii::t("user", "Resend confirmation email"), ["resend"]) ?>
+            <?= Html::a(Yii::t("user", "Register"), ["/user/register"]) ?> /
+            <?= Html::a(Yii::t("user", "Forgot password") . "?", ["#"]) ?> /
+            <?= Html::a(Yii::t("user", "Resend confirmation email"), ["#"]) ?>
         </div>
     </div>
 

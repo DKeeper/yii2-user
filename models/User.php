@@ -12,6 +12,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use yii\behaviors\TimestampBehavior;
+use dkeeper\yii2\user\helpers\ModuleTrait;
 
 /**
  * This is the model class for table "{tablePrefix}user".
@@ -33,6 +34,8 @@ use yii\behaviors\TimestampBehavior;
  *
  */
 class User extends ActiveRecord implements IdentityInterface {
+    use ModuleTrait;
+
     /**
      * @var int Inactive status
      */
@@ -138,7 +141,7 @@ class User extends ActiveRecord implements IdentityInterface {
         // modify view path to module views
         $mailer           = Yii::$app->mailer;
         $oldViewPath      = $mailer->viewPath;
-        $mailer->viewPath = Yii::$app->getModule("user")->emailViewPath;
+        $mailer->viewPath = $this->getModule()->emailViewPath;
 
         // send email
         $user    = $this;
@@ -169,5 +172,30 @@ class User extends ActiveRecord implements IdentityInterface {
     public function verifyPassword($password)
     {
         return Yii::$app->security->validatePassword($password, $this->password);
+    }
+
+    /**
+     * Get display name for the user
+     *
+     * @var string $default
+     * @return string|int
+     */
+    public function getDisplayName($default = "")
+    {
+        // define possible fields
+        $possibleNames = [
+            "username",
+            "email",
+            "id",
+        ];
+
+        // go through each and return if valid
+        foreach ($possibleNames as $possibleName) {
+            if (!empty($this->$possibleName)) {
+                return $this->$possibleName;
+            }
+        }
+
+        return $default;
     }
 } 
