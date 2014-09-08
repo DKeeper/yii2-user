@@ -13,9 +13,17 @@ class Module extends \yii\base\Module
 
     public $requireUsername = true;
 
+    public $requirePhone = true;
+
     public $loginEmail = true;
 
     public $loginUsername = true;
+
+    public $loginPhone = true;
+
+    public $emailConfirmation = true;
+
+    public $phoneConfirmation = false;
 
     public $loginDuration = 86400; // 1 day
 
@@ -23,12 +31,30 @@ class Module extends \yii\base\Module
 
     public $resetKeyDuration = 3600; // 1 hour
 
+    public $confirmKeyDuration = 3600;
+
+    public $adminRole = "admin";
+
+    public $fieldRules = [
+        'username' => [
+            'type' => 'match',
+            'pattern' => '/^[A-Za-z0-9_]+$/u',
+            'message' => '{attribute} can contain only latin letters, numbers, and "_"',
+        ],
+        'phone' => [
+            'type' => 'match',
+            'pattern' => '/^\+\d+$/u',
+            'message' => '{attribute} can contain only "+" and numbers',
+        ],
+    ];
+
     protected $_models = [];
 
     public $controllerMap = [
         'login' => 'dkeeper\yii2\user\controllers\LoginController',
         'logout' => 'dkeeper\yii2\user\controllers\LogoutController',
         'register' => 'dkeeper\yii2\user\controllers\RegisterController',
+        'confirm' => 'dkeeper\yii2\user\controllers\ConfirmController',
     ];
 
     public $modelClasses = [
@@ -37,7 +63,7 @@ class Module extends \yii\base\Module
     ];
 
     public $urlRules = [
-        '<a:(login|logout|register)>' => 'user/<a>',
+        '<a:(login|logout|register|profile)>' => 'user/<a>',
     ];
 
     public function init()
@@ -45,12 +71,12 @@ class Module extends \yii\base\Module
         parent::init();
         if($this->loginEmail) $this->requireEmail = true;
         if($this->loginUsername) $this->requireUsername = true;
+        if($this->loginPhone) $this->requirePhone = true;
 
         if (empty(Yii::$app->i18n->translations['user'])) {
             Yii::$app->i18n->translations['user'] = [
                 'class' => 'yii\i18n\PhpMessageSource',
                 'basePath' => __DIR__ . '/messages',
-                //'forceTranslation' => true,
             ];
         }
     }

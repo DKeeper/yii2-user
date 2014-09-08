@@ -57,15 +57,17 @@ class LoginForm extends Model
         // check for valid user
         $user = $this->getUser();
         if (!$user) {
-
-            // calculate error message
-            if ($this->getModule()->loginEmail && $this->getModule()->loginUsername) {
-                $errorAttribute = "Email/username";
-            } elseif ($this->getModule()->loginEmail) {
-                $errorAttribute = "Email";
-            } else {
-                $errorAttribute = "Username";
+            $errorAttribute = "";
+            if($this->getModule()->loginEmail){
+                $errorAttribute .= "/Email";
             }
+            if($this->getModule()->loginUsername){
+                $errorAttribute .= "/Username";
+            }
+            if($this->getModule()->loginPhone){
+                $errorAttribute .= "/Phone";
+            }
+            $errorAttribute = trim('/',$errorAttribute);
             $this->addError("username", Yii::t("user", "$errorAttribute not found"));
         }
     }
@@ -101,7 +103,7 @@ class LoginForm extends Model
         }
 
         // check password
-        /** @var \amnah\yii2\user\models\User $user */
+        /** @var \dkeeper\yii2\user\models\User $user */
         $user = $this->getUser();
         if (!$user->verifyPassword($this->password)) {
             $this->addError("password", Yii::t("user", "Incorrect password"));
@@ -129,6 +131,9 @@ class LoginForm extends Model
             }
             if ($this->getModule()->loginUsername) {
                 $user->orWhere(["username" => $this->username]);
+            }
+            if ($this->getModule()->loginPhone) {
+                $user->orWhere(["phone" => $this->username]);
             }
 
             // get and store user

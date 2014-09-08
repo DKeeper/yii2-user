@@ -12,6 +12,8 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use yii\behaviors\TimestampBehavior;
+use yii\swiftmailer\Mailer;
+use yii\swiftmailer\Message;
 use dkeeper\yii2\user\helpers\ModuleTrait;
 
 /**
@@ -20,16 +22,21 @@ use dkeeper\yii2\user\helpers\ModuleTrait;
  * @property string    $id
  * @property integer   $status
  * @property string    $email
+ * @property integer    $email_confirm
  * @property string    $new_email
+ * @property string    $phone
+ * @property integer    $phone_confirm
+ * @property string    $new_phone
  * @property string    $username
  * @property string    $password
  * @property string    $auth_key
+ * @property integer    $auth_key_to
  * @property string    $login_ip
- * @property int    $last_login
+ * @property integer    $last_login
  * @property string    $create_ip
- * @property int    $created_at
- * @property int    $updated_at
- * @property string    $ban_to
+ * @property integer    $created_at
+ * @property integer    $updated_at
+ * @property integer    $ban_to
  * @property string    $ban_reason
  *
  */
@@ -50,6 +57,108 @@ class User extends ActiveRecord implements IdentityInterface {
      * @var int Unconfirmed email status
      */
     const UNCONFIRMED_EMAIL = 2;
+
+    /**
+     * @var int Unconfirmed phone status
+     */
+    const UNCONFIRMED_PHONE = 3;
+
+    /**
+     * @var string New password - for registration and changing password
+     */
+    public $newPassword;
+
+    /**
+     * @var string New password confirmation - for reset
+     */
+    public $newPasswordConfirm;
+
+    /**
+     * @var string Current password - for account page updates
+     */
+    public $currentPassword;
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        // set initial rules
+        $rules = [
+            // general email and username rules
+            [['email', 'username', 'phone'], 'string', 'max' => 255],
+            [['email', 'username', 'phone'], 'unique'],
+            [['email', 'username', 'phone'], 'filter', 'filter' => 'trim'],
+            [['email'], 'email'],
+
+            // password rules
+            [['newPassword'], 'string', 'min' => 3],
+            [['newPassword'], 'filter', 'filter' => 'trim'],
+            [['newPassword'], 'required', 'on' => ['register', 'reset']],
+            [['newPasswordConfirm'], 'required', 'on' => ['reset']],
+            [['newPasswordConfirm'], 'compare', 'compareAttribute' => 'newPassword', 'message' => 'Passwords do not match'],
+
+            // account page
+            [['currentPassword'], 'required', 'on' => ['account']],
+            [['currentPassword'], 'validateCurrentPassword', 'on' => ['account']],
+
+            // admin crud rules
+            [['ban_to'], 'integer', 'on' => [$this->getModule()->adminRole]],
+            [['ban_reason'], 'string', 'max' => 255, 'on' => $this->getModule()->adminRole],
+        ];
+
+        // add custom rules from Module
+        foreach($this->getModule()->fieldRules as $name => $data){
+            $rules[] = [
+                [$name],
+                $data['type'],
+                'pattern' => $data['pattern'],
+                'message' => Yii::t('user',$data['message'])
+            ];
+        }
+
+        // add required rules for email/username depending on module properties
+        $requireFields = ["requireEmail", "requireUsername", "requirePhone"];
+        foreach ($requireFields as $requireField) {
+            if (Yii::$app->getModule("user")->$requireField) {
+                $attribute = strtolower(substr($requireField, 7)); // "email" or "username"
+                $rules[]   = [$attribute, "required"];
+            }
+        }
+
+        return $rules;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id'          => Yii::t('user', 'ID'),
+            'status'      => Yii::t('user', 'Status'),
+            'email'       => Yii::t('user', 'Email'),
+            'email_confirm' => Yii::t('user', 'Email confirmation'),
+            'new_email'   => Yii::t('user', 'New email'),
+            'phone'       => Yii::t('user', 'Phone'),
+            'phone_confirm' => Yii::t('user', 'Phone confirmation'),
+            'new_phone'   => Yii::t('user', 'New phone'),
+            'username'    => Yii::t('user', 'Username'),
+            'password'    => Yii::t('user', 'Password'),
+            'auth_key'    => Yii::t('user', 'Auth key'),
+            'auth_key_to'    => Yii::t('user', 'Auth key to'),
+            'login_ip'    => Yii::t('user', 'Login IP'),
+            'last_login'  => Yii::t('user', 'Last login time'),
+            'create_ip'   => Yii::t('user', 'Create IP'),
+            'create_at' => Yii::t('user', 'Create time'),
+            'update_at' => Yii::t('user', 'Update time'),
+            'ban_to'    => Yii::t('user', 'Ban to'),
+            'ban_reason'  => Yii::t('user', 'Ban reason'),
+
+            'currentPassword' => Yii::t('user', 'Current password'),
+            'newPassword'     => Yii::t('user', 'New password'),
+        ];
+    }
 
     /**
      * @inheritdoc
@@ -95,6 +204,7 @@ class User extends ActiveRecord implements IdentityInterface {
      * Finds an identity by the given token.
      *
      * @param string $token the token to be looked for
+     * @param null $type
      * @return IdentityInterface|null the identity object that matches the given token.
      */
     public static function findIdentityByAccessToken($token, $type = null)
@@ -127,6 +237,10 @@ class User extends ActiveRecord implements IdentityInterface {
         return $this->getAuthKey() === $authKey;
     }
 
+    public function sendPhoneConfirmation()
+    {
+
+    }
 
     /**
      * Send email confirmation to user
@@ -141,14 +255,14 @@ class User extends ActiveRecord implements IdentityInterface {
         // modify view path to module views
         $mailer           = Yii::$app->mailer;
         $oldViewPath      = $mailer->viewPath;
-        $mailer->viewPath = $this->getModule()->emailViewPath;
+        $mailer->viewPath = "@vendor/dkeeper/yii2/user/views/mail";
 
         // send email
         $user    = $this;
-        $profile = $user->profile;
         $email   = $user->new_email !== null ? $user->new_email : $user->email;
         $subject = Yii::$app->id . " - " . Yii::t("user", "Email Confirmation");
-        $message  = $mailer->compose('confirmEmail', compact("subject", "user", "profile", "userKey"))
+        $userKey = $user->auth_key;
+        $message  = $mailer->compose('confirmEmail', compact("subject", "user", "userKey"))
             ->setTo($email)
             ->setSubject($subject);
 
@@ -198,4 +312,72 @@ class User extends ActiveRecord implements IdentityInterface {
 
         return $default;
     }
-} 
+
+    public function setRegisterAttributes($status = null)
+    {
+        // set default attributes
+        $attributes = [
+            "auth_key"  => Yii::$app->security->generateRandomString(),
+            "auth_key_to"  => time() + $this->getModule()->confirmKeyDuration,
+            "status"    => static::ACTIVE,
+        ];
+
+        $emailConfirmation = $this->getModule()->emailConfirmation;
+        if($emailConfirmation && $this->isNewRecord) $this->email_confirm = false;
+        $phoneConfirmation = $this->getModule()->phoneConfirmation;
+        if($phoneConfirmation && $this->isNewRecord) $this->phone_confirm = false;
+
+        if ($status) {
+            $attributes["status"] = $status;
+        } elseif ( ($emailConfirmation && !$this->email_confirm) || ($phoneConfirmation && !$this->phone_confirm) ) {
+            $attributes["status"] = static::INACTIVE;
+        }
+
+        // set attributes and return
+        $this->setAttributes($attributes, false);
+        return $this;
+    }
+
+    /**
+     * Confirm user
+     *
+     * @param $attr string
+     * @return bool
+     */
+    public function confirm($attr)
+    {
+        // update status
+        $this->status = static::ACTIVE;
+
+        // update new_email if set
+        switch($attr){
+            case "email":
+                $this->email_confirm = true;
+                if ($this->new_email) {
+                    $this->email     = $this->new_email;
+                    $this->new_email = null;
+                }
+                break;
+            case "phone":
+                $this->phone_confirm = true;
+                if ($this->new_phone) {
+                    $this->phone     = $this->new_phone;
+                    $this->new_phone = null;
+                }
+                break;
+        }
+
+        // save and return
+        return $this->save(false);
+    }
+
+    /**
+     * Validate current password (account page)
+     */
+    public function validateCurrentPassword()
+    {
+        if (!$this->verifyPassword($this->currentPassword)) {
+            $this->addError("currentPassword", "Current password incorrect");
+        }
+    }
+}
