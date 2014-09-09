@@ -27,8 +27,6 @@ class Module extends \yii\base\Module
 
     public $loginDuration = 86400; // 1 day
 
-    public $activateKeyDuration = 86000;
-
     public $resetKeyDuration = 3600; // 1 hour
 
     public $confirmKeyDuration = 3600;
@@ -59,11 +57,12 @@ class Module extends \yii\base\Module
 
     public $modelClasses = [
         'user' => 'dkeeper\yii2\user\models\User',
+        'userKey' => 'dkeeper\yii2\user\models\UserKey',
         'loginForm' => 'dkeeper\yii2\user\models\LoginForm',
     ];
 
     public $urlRules = [
-        '<a:(login|logout|register|profile)>' => 'user/<a>',
+        '<a:(login|logout|register|profile|confirm)>' => 'user/<a>',
     ];
 
     public function init()

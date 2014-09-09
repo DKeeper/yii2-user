@@ -44,7 +44,7 @@ return [
     ' - Please check your email to confirm your account' => ' - Проверьте свою почту, чтобы подтвердить свой ​​аккаунт',
     'Account updated' => 'Дата обновления аккаунта',
     'Profile updated' => 'Дата обновления профиля',
-    'Confirmation email resent' => 'Подтверждение по электронной почте отправлено заново',
+    'User is not active, confirmation email with ney key resent' => 'Пользователь не подтвержден, по электронной почте заново отправлено подтверждение с новым ключем',
     'Email change cancelled' => 'Изменение E-mail отменено',
     'Instructions to reset your password have been sent' => 'Инструкции по изменению вашего пароля, были отправлены в ваш почтовый ящик',
 
@@ -71,7 +71,7 @@ return [
     'Changing your email requires email confirmation' => 'Изменение электронной почты требует подтверждения нового адреса',
     'Confirmed' => 'Подтверждено',
     'Error' => 'Ошибка',
-    'Your email [ {email} ] has been confirmed' => 'Ваш адрес электронной почты [ {email} ] было подтверждено',
+    'Your email [ {email} ] has been confirmed' => 'Ваш адрес электронной почты [ {email} ] был подтвержден',
     'Go to my profile' => 'К моему профилю',
     'Go home' => 'На главную',
     'Log in here' => 'Войти сейчас',

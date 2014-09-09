@@ -13,6 +13,7 @@ use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use dkeeper\yii2\user\models\UserKey;
 
 class RegisterController extends Controller {
 
@@ -51,10 +52,12 @@ class RegisterController extends Controller {
                 $user->setRegisterAttributes()->save(false);
 
                 if(!$user->email_confirm){
-                    $user->sendEmailConfirmation();
+                    $userKey = UserKey::generate($user->id,UserKey::EMAIL_ACTIVATE,$user->getModule()->confirmKeyDuration);
+                    $user->sendEmailConfirmation($userKey);
                 }
                 if(!$user->phone_confirm){
-                    $user->sendPhoneConfirmation();
+                    $userKey = UserKey::generate($user->id,UserKey::PHONE_ACTIVATE,$user->getModule()->confirmKeyDuration);
+                    $user->sendPhoneConfirmation($userKey);
                 }
 
                 // set flash

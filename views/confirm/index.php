@@ -17,7 +17,7 @@ $this->title = Yii::t('user', $success ? 'Confirmed' : 'Error');
 
         <p><?= Yii::t("user", "Your email [ {email} ] has been confirmed", ["email" => $success]) ?></p>
 
-        <?php if (Yii::$app->user->isLoggedIn): ?>
+        <?php if (!Yii::$app->user->isGuest): ?>
 
         <p><?= Html::a(Yii::t("user", "Go to my profile"), ["/user/account"]) ?></p>
         <p><?= Html::a(Yii::t("user", "Go home"), Yii::$app->getHomeUrl()) ?></p>

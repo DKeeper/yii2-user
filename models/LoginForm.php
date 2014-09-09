@@ -87,8 +87,9 @@ class LoginForm extends Model
 
         // check status and resend email if inactive
         if ($user->status == $user::INACTIVE) {
-            $user->sendEmailConfirmation();
-            $this->addError("username", Yii::t("user", "Confirmation email resent"));
+            $userKey = UserKey::generate($user->id,UserKey::EMAIL_ACTIVATE,$user->getModule()->confirmKeyDuration);
+            $user->sendEmailConfirmation($userKey);
+            $this->addError("username", Yii::t("user", "User is not active, confirmation email with ney key resent"));
         }
     }
 

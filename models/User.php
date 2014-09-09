@@ -30,7 +30,6 @@ use dkeeper\yii2\user\helpers\ModuleTrait;
  * @property string    $username
  * @property string    $password
  * @property string    $auth_key
- * @property integer    $auth_key_to
  * @property string    $login_ip
  * @property integer    $last_login
  * @property string    $create_ip
@@ -91,6 +90,9 @@ class User extends ActiveRecord implements IdentityInterface {
             [['email', 'username', 'phone'], 'filter', 'filter' => 'trim'],
             [['email'], 'email'],
 
+            //confirm fields
+            [['email_confirm','phone_confirm'], 'default', 'value' => true],
+
             // password rules
             [['newPassword'], 'string', 'min' => 3],
             [['newPassword'], 'filter', 'filter' => 'trim'],
@@ -146,7 +148,6 @@ class User extends ActiveRecord implements IdentityInterface {
             'username'    => Yii::t('user', 'Username'),
             'password'    => Yii::t('user', 'Password'),
             'auth_key'    => Yii::t('user', 'Auth key'),
-            'auth_key_to'    => Yii::t('user', 'Auth key to'),
             'login_ip'    => Yii::t('user', 'Login IP'),
             'last_login'  => Yii::t('user', 'Last login time'),
             'create_ip'   => Yii::t('user', 'Create IP'),
@@ -156,7 +157,7 @@ class User extends ActiveRecord implements IdentityInterface {
             'ban_reason'  => Yii::t('user', 'Ban reason'),
 
             'currentPassword' => Yii::t('user', 'Current password'),
-            'newPassword'     => Yii::t('user', 'New password'),
+            'newPassword'     => Yii::t('user', 'Password'),
         ];
     }
 
@@ -183,6 +184,9 @@ class User extends ActiveRecord implements IdentityInterface {
         if (parent::beforeSave($insert)) {
             if ($this->isNewRecord) {
                 $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
+            }
+            if ($this->newPassword) {
+                $this->password = Yii::$app->security->generatePasswordHash($this->newPassword);
             }
             return true;
         }
@@ -237,7 +241,7 @@ class User extends ActiveRecord implements IdentityInterface {
         return $this->getAuthKey() === $authKey;
     }
 
-    public function sendPhoneConfirmation()
+    public function sendPhoneConfirmation($userKey)
     {
 
     }
@@ -245,9 +249,10 @@ class User extends ActiveRecord implements IdentityInterface {
     /**
      * Send email confirmation to user
      *
+     * @param $userKey
      * @return int
      */
-    public function sendEmailConfirmation()
+    public function sendEmailConfirmation($userKey)
     {
         /** @var Mailer $mailer */
         /** @var Message $message */
@@ -255,14 +260,15 @@ class User extends ActiveRecord implements IdentityInterface {
         // modify view path to module views
         $mailer           = Yii::$app->mailer;
         $oldViewPath      = $mailer->viewPath;
-        $mailer->viewPath = "@vendor/dkeeper/yii2/user/views/mail";
+        $mailer->viewPath = "@vendor/dkeeper/yii2-user/views/mail";
 
         // send email
         $user    = $this;
         $email   = $user->new_email !== null ? $user->new_email : $user->email;
         $subject = Yii::$app->id . " - " . Yii::t("user", "Email Confirmation");
-        $userKey = $user->auth_key;
-        $message  = $mailer->compose('confirmEmail', compact("subject", "user", "userKey"))
+        $key = $userKey->key_value;
+        $type = $userKey::EMAIL_ACTIVATE;
+        $message  = $mailer->compose('confirmEmail', compact("subject", "user", "key", "type"))
             ->setTo($email)
             ->setSubject($subject);
 
@@ -317,10 +323,10 @@ class User extends ActiveRecord implements IdentityInterface {
     {
         // set default attributes
         $attributes = [
-            "auth_key"  => Yii::$app->security->generateRandomString(),
-            "auth_key_to"  => time() + $this->getModule()->confirmKeyDuration,
             "status"    => static::ACTIVE,
         ];
+
+        if($this->isNewRecord) $this->auth_key = Yii::$app->security->generateRandomString();
 
         $emailConfirmation = $this->getModule()->emailConfirmation;
         if($emailConfirmation && $this->isNewRecord) $this->email_confirm = false;
@@ -346,9 +352,6 @@ class User extends ActiveRecord implements IdentityInterface {
      */
     public function confirm($attr)
     {
-        // update status
-        $this->status = static::ACTIVE;
-
         // update new_email if set
         switch($attr){
             case "email":
@@ -366,6 +369,8 @@ class User extends ActiveRecord implements IdentityInterface {
                 }
                 break;
         }
+
+        $this->setRegisterAttributes();
 
         // save and return
         return $this->save(false);
