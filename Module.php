@@ -4,6 +4,7 @@ namespace dkeeper\yii2\user;
 
 use Yii;
 use yii\base\Application;
+use \yii\helpers\ArrayHelper;
 
 class Module extends \yii\base\Module
 {
@@ -33,7 +34,33 @@ class Module extends \yii\base\Module
 
     public $adminRole = "admin";
 
-    public $fieldRules = [
+    public $urlRules = [
+        '<a:(login|logout|register|confirm|forgot|reset)>' => 'user/<a>',
+    ];
+
+    public $fieldRules = [];
+
+    public $modelClasses = [];
+
+    protected $_models = [];
+
+    protected $_defaultControllerMap = [
+        'login' => 'dkeeper\yii2\user\controllers\LoginController',
+        'logout' => 'dkeeper\yii2\user\controllers\LogoutController',
+        'register' => 'dkeeper\yii2\user\controllers\RegisterController',
+        'confirm' => 'dkeeper\yii2\user\controllers\ConfirmController',
+        'forgot' => 'dkeeper\yii2\user\controllers\ForgotController',
+        'reset' => 'dkeeper\yii2\user\controllers\ResetController',
+    ];
+
+    protected $_defaultModelClasses = [
+        'user' => 'dkeeper\yii2\user\models\User',
+        'userKey' => 'dkeeper\yii2\user\models\UserKey',
+        'loginForm' => 'dkeeper\yii2\user\models\LoginForm',
+        'forgotForm' => 'dkeeper\yii2\user\models\ForgotForm',
+    ];
+
+    protected $_defaultFieldRules = [
         'username' => [
             'type' => 'match',
             'pattern' => '/^[A-Za-z0-9_]+$/u',
@@ -46,28 +73,21 @@ class Module extends \yii\base\Module
         ],
     ];
 
-    protected $_models = [];
-
-    public $controllerMap = [
-        'login' => 'dkeeper\yii2\user\controllers\LoginController',
-        'logout' => 'dkeeper\yii2\user\controllers\LogoutController',
-        'register' => 'dkeeper\yii2\user\controllers\RegisterController',
-        'confirm' => 'dkeeper\yii2\user\controllers\ConfirmController',
-    ];
-
-    public $modelClasses = [
-        'user' => 'dkeeper\yii2\user\models\User',
-        'userKey' => 'dkeeper\yii2\user\models\UserKey',
-        'loginForm' => 'dkeeper\yii2\user\models\LoginForm',
-    ];
-
-    public $urlRules = [
-        '<a:(login|logout|register|profile|confirm)>' => 'user/<a>',
-    ];
-
     public function init()
     {
         parent::init();
+        $this->controllerMap = ArrayHelper::merge(
+            $this->_defaultControllerMap,
+            $this->controllerMap
+        );
+        $this->modelClasses = ArrayHelper::merge(
+            $this->_defaultModelClasses,
+            $this->modelClasses
+        );
+        $this->fieldRules = ArrayHelper::merge(
+            $this->_defaultFieldRules,
+            $this->fieldRules
+        );
         if($this->loginEmail) $this->requireEmail = true;
         if($this->loginUsername) $this->requireUsername = true;
         if($this->loginPhone) $this->requirePhone = true;

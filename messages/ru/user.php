@@ -10,6 +10,7 @@ return [
     'Full Name' => 'Полное имя',
 
     'Name' => 'Имя',
+    'Type of field' => 'Тип поля',
 
     'Status' => 'Статус',
     'Email' => 'E-mail адрес',
@@ -28,13 +29,23 @@ return [
     'Ban to' => 'Дата бана',
     'Ban reason' => 'Причина бана',
     'Current password' => 'Текущий пароль',
+    'Password confirm' => 'Подтвердите пароль',
     'New password' => 'Новый пароль',
+    'Passwords do not match' => 'Пароли не совпадают',
+
+    'Password was changed successful' => 'Пароль был успешно изменен',
+
+    'Email confirmation'=>'Подтверждение E-mail',
+
+    'Username/Email' => 'Логин пользователя/E-mail адрес',
+    'Username/Email/Phone' => 'Логин пользователя/E-mail адрес/телефон',
+    'Username/Phone' => 'Логин пользователя/телефон',
 
     // models/forms
     'Email not found' => 'E-mail не найдено',
     'Email/username not found' => 'E-mail/имя пользователя не найдено',
     'Username not found' => 'Пользователь не найден',
-    'User is banned - {banReason}' => 'Пользователя блокировано - {banReason}',
+    'User is banned - {banReason}' => 'Пользователь блокирован - {banReason}',
     'Incorrect password' => 'Неверный пароль',
     'Remember Me' => 'Запомнить меня',
     'Email is already active' => 'E-mail уже активен',
@@ -46,7 +57,7 @@ return [
     'Profile updated' => 'Дата обновления профиля',
     'User is not active, confirmation email with ney key resent' => 'Пользователь не подтвержден, по электронной почте заново отправлено подтверждение с новым ключем',
     'Email change cancelled' => 'Изменение E-mail отменено',
-    'Instructions to reset your password have been sent' => 'Инструкции по изменению вашего пароля, были отправлены в ваш почтовый ящик',
+    'Instructions to reset your password have been sent' => 'Инструкции по изменению вашего пароля были отправлены в ваш почтовый ящик',
 
     // mail
     'Please confirm your email address by clicking the link below:' => 'Пожалуйста, подтвердите свой ​​адрес электронной почты, нажав на ссылку ниже:',
@@ -76,6 +87,7 @@ return [
     'Go home' => 'На главную',
     'Log in here' => 'Войти сейчас',
     'Invalid key' => 'Неверный ключ',
+    'Expired key' => 'Просроченый ключ',
     'Forgot password' => 'Забыли пароль',
     'Submit' => 'Отправить',
     'Yii 2 User' => 'Yii 2 пользователь',

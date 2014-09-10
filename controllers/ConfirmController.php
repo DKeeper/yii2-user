@@ -27,7 +27,7 @@ class ConfirmController extends Controller
                 return $this->goHome();
             }
             $model->user->confirm('email');
-            $model->consume_to = time();
+            $model->consume();
             $success = $model->user->email;
         }
 

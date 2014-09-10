@@ -60,6 +60,11 @@ class UserKey extends ActiveRecord
         return $this->hasOne($user::className(), ['id' => 'user_id']);
     }
 
+    public function consume(){
+        $this->consume_to = time();
+        $this->save(false);
+    }
+
     public static function generate($userId, $type, $consumeDuration = null)
     {
         // attempt to find existing record

@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 $this->title = Yii::t('user', 'Login');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-default-login">
+<div class="user-login">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -40,8 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <br/><br/>
             <?= Html::a(Yii::t("user", "Register"), ["/user/register"]) ?> /
-            <?= Html::a(Yii::t("user", "Forgot password") . "?", ["#"]) ?> /
-            <?= Html::a(Yii::t("user", "Resend confirmation email"), ["#"]) ?>
+            <?= Html::a(Yii::t("user", "Forgot password") . "?", ["/user/forgot"]) ?>
         </div>
     </div>
 

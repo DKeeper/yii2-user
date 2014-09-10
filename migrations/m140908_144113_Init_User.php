@@ -44,7 +44,8 @@ class m140908_144113_Init_User extends Migration
             "consume_to" => Schema::TYPE_INTEGER . " null default null",
         ]);
 
-        $this->createIndex(UserKey::tableName() . "_user_id", UserKey::tableName(), "user_id", true);
+        $this->createIndex(UserKey::tableName() . "_user_id", UserKey::tableName(), "user_id");
+        $this->createIndex(UserKey::tableName() . "_type", UserKey::tableName(), "type");
     }
 
     public function safeDown()

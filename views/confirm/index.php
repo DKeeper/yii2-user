@@ -9,7 +9,7 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('user', $success ? 'Confirmed' : 'Error');
 ?>
-<div class="user-default-confirm">
+<div class="user-confirm">
 
     <?php if ($success): ?>
 

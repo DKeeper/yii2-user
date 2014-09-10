@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
 $this->title = Yii::t('user', 'Register');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-default-register">
+<div class="user-register">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

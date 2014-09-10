@@ -98,7 +98,7 @@ class User extends ActiveRecord implements IdentityInterface {
             [['newPassword'], 'filter', 'filter' => 'trim'],
             [['newPassword'], 'required', 'on' => ['register', 'reset']],
             [['newPasswordConfirm'], 'required', 'on' => ['reset']],
-            [['newPasswordConfirm'], 'compare', 'compareAttribute' => 'newPassword', 'message' => 'Passwords do not match'],
+            [['newPasswordConfirm'], 'compare', 'compareAttribute' => 'newPassword', 'message' => Yii::t('user','Passwords do not match')],
 
             // account page
             [['currentPassword'], 'required', 'on' => ['account']],
@@ -158,6 +158,7 @@ class User extends ActiveRecord implements IdentityInterface {
 
             'currentPassword' => Yii::t('user', 'Current password'),
             'newPassword'     => Yii::t('user', 'Password'),
+            'newPasswordConfirm'     => Yii::t('user', 'Password confirm'),
         ];
     }
 
@@ -265,7 +266,7 @@ class User extends ActiveRecord implements IdentityInterface {
         // send email
         $user    = $this;
         $email   = $user->new_email !== null ? $user->new_email : $user->email;
-        $subject = Yii::$app->id . " - " . Yii::t("user", "Email Confirmation");
+        $subject = Yii::$app->id . " - " . Yii::t("user", "Email confirmation");
         $key = $userKey->key_value;
         $type = $userKey::EMAIL_ACTIVATE;
         $message  = $mailer->compose('confirmEmail', compact("subject", "user", "key", "type"))
