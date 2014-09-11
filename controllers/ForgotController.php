@@ -30,7 +30,7 @@ class ForgotController extends Controller
     }
 
     public function actionIndex(){
-        /** @var $model \dkeeper\yii2\user\models\ForgotForm */
+        /** @var $model \dkeeper\yii2\user\models\forms\ForgotForm */
         $model = Yii::$app->getModule('user')->model('forgotForm');
 
         if($model->load(Yii::$app->request->post()) && $model->sendForgotEmail()){

@@ -31,7 +31,7 @@ class LoginController extends Controller {
 
     public function actionIndex()
     {
-        /** @var $model \dkeeper\yii2\user\models\LoginForm */
+        /** @var $model \dkeeper\yii2\user\models\forms\LoginForm */
         $model = Yii::$app->getModule('user')->model('loginForm');
 
         if ($model->load(Yii::$app->request->post()) && $model->login(Yii::$app->getModule("user")->loginDuration)) {

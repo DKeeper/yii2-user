@@ -15,9 +15,9 @@ return [
     'Status' => 'Статус',
     'Email' => 'E-mail адрес',
     'New email' => 'Новый E-mail адрес',
-    'Email confirmation' => 'E-mail подтвержден',
+    'Email confirmation'=>'Подтверждение E-mail',
     'Phone' => '№ телефона',
-    'New phone' => 'Новый E-mail адрес',
+    'New phone' => 'Новый № телефона',
     'Phone confirmation' => 'Телефон подтвержден',
     'Username' => 'Логин пользователя',
     'Password' => 'Пароль',
@@ -28,14 +28,14 @@ return [
     'Create IP' => 'IP создания',
     'Ban to' => 'Дата бана',
     'Ban reason' => 'Причина бана',
+    'Created at' => 'Создан',
+    'Updated at' => 'Изменен',
     'Current password' => 'Текущий пароль',
     'Password confirm' => 'Подтвердите пароль',
     'New password' => 'Новый пароль',
     'Passwords do not match' => 'Пароли не совпадают',
 
     'Password was changed successful' => 'Пароль был успешно изменен',
-
-    'Email confirmation'=>'Подтверждение E-mail',
 
     'Username/Email' => 'Логин пользователя/E-mail адрес',
     'Username/Email/Phone' => 'Логин пользователя/E-mail адрес/телефон',
@@ -65,15 +65,21 @@ return [
 
     // admin views
     'Users' => 'Пользователи',
-    'Banned' => 'Заблокировано',
-    'Create' => 'Создано',
-    'Update' => 'Обновлено',
-    'Delete' => 'Удалено',
+    'User' => 'Пользователь',
+    'Banned' => 'Заблокирован',
+    'Create' => 'Создать',
+    'Update' => 'Обновить',
+    'Delete' => 'Удалить',
     'Search' => 'Поиск',
     'Reset' => 'Сбросить',
     'Create {modelClass}' => 'Создать {modelClass}',
     'Update {modelClass}: ' => 'Изменить {modelClass}: ',
     'Are you sure you want to delete this item?' => 'Вы уверены, что хотите удалить ваш аккаунт?',
+    'Inactive' => 'Не активен',
+    'Active' => 'Активен',
+    'Unconfirmed email' => 'Не подтвержден e-mail',
+    'Unconfirmed phone' => 'Не подтвержден телефон',
+    'Last login time' => 'Дата последнего входа',
 
     // default views
     'Account' => 'Аккаунт',
@@ -99,7 +105,7 @@ return [
     'Please fill out the following fields to login:' => 'Пожалуйста, заполните следующие поля для входа:',
     'Please fill out the following fields to register:' => 'Пожалуйста, заполните следующие поля для регистрации:',
     'Resend' => 'Повторить',
-    'Password has been reset' => 'Пароль восстановлено',
+    'Password has been reset' => 'Пароль восстановлен',
 
     '{attribute} can contain only latin letters, numbers, and "_"' => '{attribute} может содержать только латинские буквы, цифры, и "_"',
     '{attribute} can contain only "+" and numbers' => '{attribute} может содержать только "+" и цифры',

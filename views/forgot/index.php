@@ -9,7 +9,7 @@
 /**
  * @var yii\web\View $this
  * @var yii\widgets\ActiveForm $form
- * @var dkeeper\yii2\user\models\ForgotForm $model
+ * @var dkeeper\yii2\user\models\forms\ForgotForm $model
  */
 
 use yii\helpers\Html;

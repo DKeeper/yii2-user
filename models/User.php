@@ -19,14 +19,14 @@ use dkeeper\yii2\user\helpers\ModuleTrait;
 /**
  * This is the model class for table "{tablePrefix}user".
  *
- * @property string    $id
+ * @property integer    $id
  * @property integer   $status
  * @property string    $email
  * @property integer    $email_confirm
  * @property string    $new_email
- * @property string    $phone
+ * @property integer    $phone
  * @property integer    $phone_confirm
- * @property string    $new_phone
+ * @property integer    $new_phone
  * @property string    $username
  * @property string    $password
  * @property string    $auth_key
@@ -85,7 +85,8 @@ class User extends ActiveRecord implements IdentityInterface {
         // set initial rules
         $rules = [
             // general email and username rules
-            [['email', 'username', 'phone'], 'string', 'max' => 255],
+            [['phone'], 'integer'],
+            [['email', 'username'], 'string', 'max' => 255],
             [['email', 'username', 'phone'], 'unique'],
             [['email', 'username', 'phone'], 'filter', 'filter' => 'trim'],
             [['email'], 'email'],
@@ -151,8 +152,8 @@ class User extends ActiveRecord implements IdentityInterface {
             'login_ip'    => Yii::t('user', 'Login IP'),
             'last_login'  => Yii::t('user', 'Last login time'),
             'create_ip'   => Yii::t('user', 'Create IP'),
-            'create_at' => Yii::t('user', 'Create time'),
-            'update_at' => Yii::t('user', 'Update time'),
+            'create_at' => Yii::t('user', 'Created at'),
+            'update_at' => Yii::t('user', 'Updated at'),
             'ban_to'    => Yii::t('user', 'Ban to'),
             'ban_reason'  => Yii::t('user', 'Ban reason'),
 
@@ -192,6 +193,12 @@ class User extends ActiveRecord implements IdentityInterface {
             return true;
         }
         return false;
+    }
+
+    public function afterLogin(){
+        $this->login_ip   = Yii::$app->getRequest()->getUserIP();
+        $this->last_login = time();
+        return $this->save(false, ["login_ip", "last_login"]);
     }
 
     /**

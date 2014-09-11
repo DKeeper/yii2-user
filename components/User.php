@@ -28,6 +28,16 @@ class User extends \yii\web\User implements BootstrapInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function afterLogin($identity, $cookieBased, $duration)
+    {
+        /** @var \dkeeper\yii2\user\models\User $identity */
+        $identity->afterLogin();
+        parent::afterLogin($identity, $cookieBased, $duration);
+    }
+
+    /**
      * Get display name for the user
      *
      * @var string $default

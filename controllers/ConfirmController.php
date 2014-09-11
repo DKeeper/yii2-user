@@ -14,6 +14,21 @@ use dkeeper\yii2\user\models\UserKey;
 
 class ConfirmController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ]
+                ]
+            ]
+        ];
+    }
+
     public function actionIndex($key,$type)
     {
         /** @var $model \dkeeper\yii2\user\models\UserKey */

@@ -4,7 +4,6 @@ use yii\helpers\Url;
 
 /**
  * @var string $subject
- * @var \dkeeper\yii2\user\models\User $user
  * @var string $key
  * @var integer $type
  */

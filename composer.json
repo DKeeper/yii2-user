@@ -3,6 +3,7 @@
     "description": "Yii 2 user authentication module",
     "keywords": ["yii", "yii2", "user", "auth", "authentication"],
     "type": "yii2-module",
+    "version": "0.5.3",
     "license": "GPL-3.0+",
     "authors": [
         {

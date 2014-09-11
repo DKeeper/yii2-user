@@ -51,13 +51,15 @@ class Module extends \yii\base\Module
         'confirm' => 'dkeeper\yii2\user\controllers\ConfirmController',
         'forgot' => 'dkeeper\yii2\user\controllers\ForgotController',
         'reset' => 'dkeeper\yii2\user\controllers\ResetController',
+        'admin' => 'dkeeper\yii2\user\controllers\AdminController',
     ];
 
     protected $_defaultModelClasses = [
         'user' => 'dkeeper\yii2\user\models\User',
         'userKey' => 'dkeeper\yii2\user\models\UserKey',
-        'loginForm' => 'dkeeper\yii2\user\models\LoginForm',
-        'forgotForm' => 'dkeeper\yii2\user\models\ForgotForm',
+        'loginForm' => 'dkeeper\yii2\user\models\forms\LoginForm',
+        'forgotForm' => 'dkeeper\yii2\user\models\forms\ForgotForm',
+        'userSearch' => 'dkeeper\yii2\user\models\search\UserSearch',
     ];
 
     protected $_defaultFieldRules = [
@@ -68,8 +70,8 @@ class Module extends \yii\base\Module
         ],
         'phone' => [
             'type' => 'match',
-            'pattern' => '/^\+\d+$/u',
-            'message' => '{attribute} can contain only "+" and numbers',
+            'pattern' => '/^\d+$/u',
+            'message' => '{attribute} can contain only numbers',
         ],
     ];
 
