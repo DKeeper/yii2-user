@@ -51,6 +51,11 @@ class RegisterController extends Controller {
 
                 $user->setRegisterAttributes()->save(false);
 
+                $profile = $user->getModule()->model('profile');
+
+                $profile->user_id = $user->id;
+                $profile->save();
+
                 if(!$user->email_confirm){
                     $userKey = UserKey::generate($user->id,UserKey::EMAIL_ACTIVATE,$user->getModule()->confirmKeyDuration);
                     $user->sendEmailConfirmation($userKey);

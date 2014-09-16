@@ -4,6 +4,7 @@ use yii\db\Schema;
 use yii\db\Migration;
 use dkeeper\yii2\user\models\User;
 use dkeeper\yii2\user\models\UserKey;
+use dkeeper\yii2\user\models\Profile;
 
 class m140908_144113_Init_User extends Migration
 {
@@ -46,11 +47,21 @@ class m140908_144113_Init_User extends Migration
 
         $this->createIndex(UserKey::tableName() . "_user_id", UserKey::tableName(), "user_id");
         $this->createIndex(UserKey::tableName() . "_type", UserKey::tableName(), "type");
+
+        $this->createTable(Profile::tableName(),[
+            "id" => Schema::TYPE_INTEGER . " not null auto_increment primary key",
+            "user_id" => Schema::TYPE_INTEGER . " not null",
+            "first_name" => "varchar(255) null default null",
+            "last_name" => "varchar(255) null default null",
+        ]);
+
+        $this->createIndex(Profile::tableName() . "_user_id", Profile::tableName(), "user_id");
     }
 
     public function safeDown()
     {
         $this->dropTable(UserKey::tableName());
+        $this->dropTable(Profile::tableName());
         $this->dropTable(User::tableName());
         echo "m140908_144113_Init_DB has been returned.\n";
     }

@@ -15,6 +15,8 @@ use yii\behaviors\TimestampBehavior;
 use yii\swiftmailer\Mailer;
 use yii\swiftmailer\Message;
 use dkeeper\yii2\user\helpers\ModuleTrait;
+use yii\helpers\Inflector;
+use ReflectionClass;
 
 /**
  * This is the model class for table "{tablePrefix}user".
@@ -38,6 +40,7 @@ use dkeeper\yii2\user\helpers\ModuleTrait;
  * @property integer    $ban_to
  * @property string    $ban_reason
  *
+ * @property \dkeeper\yii2\user\models\Profile $profile
  */
 class User extends ActiveRecord implements IdentityInterface {
     use ModuleTrait;
@@ -45,22 +48,22 @@ class User extends ActiveRecord implements IdentityInterface {
     /**
      * @var int Inactive status
      */
-    const INACTIVE = 0;
+    const ST_INACTIVE = 0;
 
     /**
      * @var int Active status
      */
-    const ACTIVE = 1;
+    const ST_ACTIVE = 1;
 
     /**
      * @var int Unconfirmed email status
      */
-    const UNCONFIRMED_EMAIL = 2;
+    const ST_UNCONFIRMED_EMAIL = 2;
 
     /**
      * @var int Unconfirmed phone status
      */
-    const UNCONFIRMED_PHONE = 3;
+    const ST_UNCONFIRMED_PHONE = 3;
 
     /**
      * @var string New password - for registration and changing password
@@ -193,6 +196,16 @@ class User extends ActiveRecord implements IdentityInterface {
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProfile()
+    {
+        /** @var $profile \dkeeper\yii2\user\models\Profile */
+        $profile = $this->getModule()->model('profile');
+        return $this->hasOne($profile::className(), ['user_id' => 'id']);
     }
 
     public function afterLogin(){
@@ -331,7 +344,7 @@ class User extends ActiveRecord implements IdentityInterface {
     {
         // set default attributes
         $attributes = [
-            "status"    => static::ACTIVE,
+            "status"    => static::ST_ACTIVE,
         ];
 
         if($this->isNewRecord) $this->auth_key = Yii::$app->security->generateRandomString();
@@ -344,7 +357,7 @@ class User extends ActiveRecord implements IdentityInterface {
         if ($status) {
             $attributes["status"] = $status;
         } elseif ( ($emailConfirmation && !$this->email_confirm) || ($phoneConfirmation && !$this->phone_confirm) ) {
-            $attributes["status"] = static::INACTIVE;
+            $attributes["status"] = static::ST_INACTIVE;
         }
 
         // set attributes and return
@@ -392,5 +405,24 @@ class User extends ActiveRecord implements IdentityInterface {
         if (!$this->verifyPassword($this->currentPassword)) {
             $this->addError("currentPassword", "Current password incorrect");
         }
+    }
+
+    public static function statusDropdown()
+    {
+        static $dropdown;
+        if ($dropdown === null) {
+
+            $reflClass = new ReflectionClass(get_called_class());
+            $constants = $reflClass->getConstants();
+
+            foreach ($constants as $constantName => $constantValue) {
+                if(preg_match('/^ST_/',$constantName)){
+                    $prettyName               = str_replace("ST_", "", $constantName);
+                    $prettyName               = Inflector::humanize(strtolower($prettyName));
+                    $dropdown[$constantValue] = Yii::t('user',$prettyName);
+                }
+            }
+        }
+        return $dropdown;
     }
 }

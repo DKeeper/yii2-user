@@ -73,7 +73,7 @@ return [
     'Search' => 'Поиск',
     'Reset' => 'Сбросить',
     'Create {modelClass}' => 'Создать {modelClass}',
-    'Update {modelClass}: ' => 'Изменить {modelClass}: ',
+    'Update {modelClass}' => 'Изменить {modelClass}',
     'Are you sure you want to delete this item?' => 'Вы уверены, что хотите удалить ваш аккаунт?',
     'Inactive' => 'Не активен',
     'Active' => 'Активен',

@@ -86,7 +86,7 @@ class LoginForm extends Model
         }
 
         // check status and resend email if inactive
-        if ($user->status == $user::INACTIVE) {
+        if ($user->status == $user::ST_INACTIVE) {
             /** @var $userKey \dkeeper\yii2\user\models\UserKey */
             $userKey = $this->getModule()->model("userKey");
             $userKey = $userKey::generate($user->id,$userKey::EMAIL_ACTIVATE,$user->getModule()->confirmKeyDuration);

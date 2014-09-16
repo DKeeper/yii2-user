@@ -35,7 +35,8 @@ class Module extends \yii\base\Module
     public $adminRole = "admin";
 
     public $urlRules = [
-        '<a:(login|logout|register|confirm|forgot|reset)>' => 'user/<a>',
+        '<a:(login|logout|register|confirm|forgot|reset|profile)>' => 'user/<a>',
+        'profile/<a>' => 'user/profile/<a>',
     ];
 
     public $fieldRules = [];
@@ -51,11 +52,13 @@ class Module extends \yii\base\Module
         'confirm' => 'dkeeper\yii2\user\controllers\ConfirmController',
         'forgot' => 'dkeeper\yii2\user\controllers\ForgotController',
         'reset' => 'dkeeper\yii2\user\controllers\ResetController',
+        'profile' => 'dkeeper\yii2\user\controllers\ProfileController',
         'admin' => 'dkeeper\yii2\user\controllers\AdminController',
     ];
 
     protected $_defaultModelClasses = [
         'user' => 'dkeeper\yii2\user\models\User',
+        'profile' => 'dkeeper\yii2\user\models\Profile',
         'userKey' => 'dkeeper\yii2\user\models\UserKey',
         'loginForm' => 'dkeeper\yii2\user\models\forms\LoginForm',
         'forgotForm' => 'dkeeper\yii2\user\models\forms\ForgotForm',

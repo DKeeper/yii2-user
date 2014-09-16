@@ -49,4 +49,12 @@ class User extends \yii\web\User implements BootstrapInterface
         $user = $this->getIdentity();
         return $user ? $user->getDisplayName($default) : "";
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProfile()
+    {
+        return $this->getIdentity()->getProfile()->one();
+    }
 }

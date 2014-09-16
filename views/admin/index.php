@@ -17,12 +17,7 @@ use yii\grid\DataColumn;
 $this->title = Yii::t('user', 'Users');
 $this->params['breadcrumbs'][] = $this->title;
 
-$statusFilter = [
-    $searchModel::INACTIVE => Yii::t('user','Inactive'),
-    $searchModel::ACTIVE => Yii::t('user','Active'),
-    $searchModel::UNCONFIRMED_EMAIL => Yii::t('user','Unconfirmed email'),
-    $searchModel::UNCONFIRMED_PHONE => Yii::t('user','Unconfirmed phone'),
-];
+$statusFilter = $searchModel::statusDropdown();
 ?>
 <div class="users-index">
 
@@ -49,13 +44,13 @@ $statusFilter = [
             'attribute' => 'status',
             'value' => function($model, $key, $index){
                 switch($model->status){
-                    case $model::ACTIVE:
+                    case $model::ST_ACTIVE:
                         $_ = Yii::t('user','Active');
                         break;
-                    case $model::UNCONFIRMED_EMAIL:
+                    case $model::ST_UNCONFIRMED_EMAIL:
                         $_ = Yii::t('user','Unconfirmed email');
                         break;
-                    case $model::UNCONFIRMED_PHONE:
+                    case $model::ST_UNCONFIRMED_PHONE:
                         $_ = Yii::t('user','Unconfirmed phone');
                         break;
                     default:
